@@ -244,7 +244,7 @@ public class NewKeyPairController implements Initializable {
 
 
 
-//PREUZETO S INTERNETA I PREPRAVLJENO ZA NASE POTREBE!!! 
+//PREUZETO S INTERNETA I PREPRAVLJENO ZA NASE POTREBE JER OVO NI ISUS NE ZNA!!! 
 /**
 * @param id ID
 * @param pass password
@@ -312,45 +312,4 @@ public class NewKeyPairController implements Initializable {
 			return keyRingGen;
 		}
 
-//private static void exportKeyPair(
-//        OutputStream    secretOut,
-//        OutputStream    publicOut,
-//        KeyPair         pair,
-//        String          identity,
-//        char[]          passPhrase,
-//        boolean         armor)
-//        throws IOException, InvalidKeyException, NoSuchProviderException, SignatureException, PGPException
-//    {    
-//        if (armor)
-//        {
-//            secretOut = new ArmoredOutputStream(secretOut);
-//        }
-//
-//        PGPDigestCalculator sha1Calc = new JcaPGPDigestCalculatorProviderBuilder().build().
-//        		get(HashAlgorithmTags.SHA1);
-//        PGPKeyPair          keyPair = new JcaPGPKeyPair(PGPPublicKey.RSA_GENERAL, pair, new Date());
-//        PGPSecretKey        secretKey = new PGPSecretKey(PGPSignature.DEFAULT_CERTIFICATION, keyPair,
-//        		identity, sha1Calc,
-//        		null, null, new JcaPGPContentSignerBuilder(keyPair.getPublicKey().getAlgorithm(), 
-//        				HashAlgorithmTags.SHA256), 
-//        		new JcePBESecretKeyEncryptorBuilder(PGPEncryptedData.CAST5, sha1Calc)
-//        		.setProvider("BC").build(passPhrase));
-//        
-//        secretKey.encode(secretOut);
-//        
-//        secretOut.close();
-//        
-//        if (armor)
-//        {
-//            publicOut = new ArmoredOutputStream(publicOut);
-//        }
-//
-//        PGPPublicKey    key = secretKey.getPublicKey();
-//        
-//        key.encode(publicOut);
-//        
-//        
-//        publicOut.close();
-//
-//    }
 }

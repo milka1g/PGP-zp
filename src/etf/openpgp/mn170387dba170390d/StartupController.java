@@ -13,19 +13,23 @@ import java.util.ResourceBundle;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
+import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -101,6 +105,27 @@ public class StartupController implements Initializable {
     	tableRings.setItems(getKeys());
     	tableRings.setPlaceholder(new Label("No keys to display"));
     	
+    	MenuItem mi1 = new MenuItem("Export");
+    	MenuItem mi2 = new MenuItem("Delete");
+    	
+    	
+    	mi1.setOnAction((ActionEvent event) -> {
+    	    System.out.println("Export");
+    	    MyKey item = (MyKey) tableRings.getSelectionModel().getSelectedItem();
+    	    System.out.println("Selected item: " + item);
+    	});
+    	
+    	mi2.setOnAction((ActionEvent event) -> {
+    	    System.out.println("Delete");
+    	    MyKey item = (MyKey) tableRings.getSelectionModel().getSelectedItem();
+    	    System.out.println("Selected item: " + item);
+    	    deleteKey(item.getKeyID(), item.isPublic());
+    	}); 
+    	
+    	ContextMenu menu = new ContextMenu();
+    	menu.getItems().addAll(mi1,mi2);
+    	tableRings.setContextMenu(menu);
+    	
 	}
 
     @FXML
@@ -156,7 +181,8 @@ public class StartupController implements Initializable {
     			email = split[1].replace(">", "");
     		}
     		keyID = Long.toHexString(skr.getSecretKey().getKeyID());
-    		MyKey newKey = new MyKey(name,email,keyID);
+    		long keyIdLong = skr.getSecretKey().getKeyID();
+    		MyKey newKey = new MyKey(name,email,keyID, keyIdLong, false);
     		myKeys.add(newKey);
     		System.out.println(newKey.toString());
     	}
@@ -168,7 +194,23 @@ public class StartupController implements Initializable {
     public void refreshz() {
     	tableRings.setItems(getKeys());
     	tableRings.refresh();
-    	System.out.println("KURCINA");
+    }
+    
+    private static void deleteKey(String keyID, boolean isPublic) {
+    	if(isPublic) {
+    		//samo se brise iz pkrcoll
+    		Iterator<PGPPublicKeyRing> it = Main.pkrcoll.getKeyRings();
+    		while(it.hasNext()) {
+    			PGPPublicKeyRing pkr = it.next();
+    			String keyidd = Long.toHexString(pkr.getPublicKey().getKeyID());
+    			if(keyidd.equals(keyID)) {
+    				PGPPublicKeyRingCollection.removePublicKeyRing(Main.pkrcoll, pkr);
+    				break;
+    			}
+    		}
+    	} else {
+    		//ovde nesto za pw vidi da se proba
+    	}
     }
 
 }

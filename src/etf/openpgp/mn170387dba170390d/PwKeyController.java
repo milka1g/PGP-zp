@@ -44,6 +44,7 @@ public class PwKeyController {
     	}
     	else {
     		StartupController.pw = pass1;
+    		SignEncryptController.pw = pass1;
     		stage.close();
     		//stage.close();
     	}

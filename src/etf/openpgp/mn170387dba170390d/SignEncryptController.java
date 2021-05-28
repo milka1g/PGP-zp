@@ -17,17 +17,30 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
+import org.bouncycastle.openpgp.PGPSecretKey;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
+import org.bouncycastle.openpgp.operator.PBESecretKeyDecryptor;
+import org.bouncycastle.openpgp.operator.PGPDigestCalculatorProvider;
+import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyDecryptorBuilder;
+import org.bouncycastle.openpgp.operator.jcajce.JcaPGPDigestCalculatorProviderBuilder;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -66,7 +79,7 @@ public class SignEncryptController implements Initializable {
     InputStream in = null;
     private boolean encrypt=false, radix=false, zip=false, sign=false;
     private String selSecretKey = "", selPublicKey="";
-    
+    public static String pw;
     
     
     public static void setStage(Stage st) {
@@ -117,7 +130,52 @@ public class SignEncryptController implements Initializable {
     
     @FXML
     void submit(ActionEvent event) {
-    	
+    	if(sign) {
+    		PGPDigestCalculatorProvider calcProv = null;
+			try {
+				calcProv = new JcaPGPDigestCalculatorProviderBuilder().build();
+			} catch (PGPException e) {
+			}
+    		Parent root;
+	        try { 
+	            root = FXMLLoader.load(getClass().getResource("PwKey.fxml"));
+	            Stage stage = new Stage();
+	            PwKeyController.setStage(stage);
+	            stage.setTitle("Passphrase");
+	            Scene scene = new Scene(root, 250, 200);
+	            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+	            stage.setScene(scene);
+	            stage.setResizable(false);
+	            stage.initModality(Modality.APPLICATION_MODAL);
+	            stage.showAndWait();
+	        }
+	        catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	        //System.out.println("Brises secret key ID:" + item.getKeyIdLong());
+	        PGPSecretKey skr = null;
+	        try {
+				 skr = Main.skrcoll.getSecretKey(Long.parseUnsignedLong(selSecretKey,16));
+			} catch (PGPException e) {
+				System.out.println("NEMA TI TOG SECRET KLJUCA");
+			}
+
+    	    PBESecretKeyDecryptor pbeSecretKeyDecryptor = new BcPBESecretKeyDecryptorBuilder(calcProv).build(pw.toCharArray());
+    	    PGPPrivateKey a = null;
+    	    try {
+				a = skr.extractPrivateKey(pbeSecretKeyDecryptor);
+			} catch (PGPException e) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Bad passphrase");
+				alert.setHeaderText("You have entered bad passphrase");
+				alert.setContentText("Your secret key is encrypted with different passphrase, please "
+						+ "insert the correct one.");
+				alert.showAndWait();
+				return;
+			}
+    	    //System.out.println("USPEO SI EKSTRAKTOVO SI PRIVATE KLJUC:" + Long.toHexString(a.getKeyID()));
+    	    
+    	}
     }
     
     @FXML

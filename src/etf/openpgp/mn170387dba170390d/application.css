@@ -37,4 +37,29 @@
 #tableRings{
 	-fx-font-family: "Lucida Console";
 	-fx-font-size: 1.2em;
+	-fx-font-weight: bold;
 }
+
+#pwkey,#pwgen{
+	-fx-font-family: "Lucida Console";
+}
+
+.table-view{
+   -fx-font-weight: bold;
+}
+
+.table-row-cell{
+	-fx-font-size: 1.2em;
+}
+
+.table-row-cell .text {
+       -fx-fill: #000000 ;
+
+}
+
+.table-row-cell:selected .text {
+       -fx-fill: #00FFFF ;
+
+}
+
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="pwkey" fx:id="pwkey" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="etf.openpgp.mn170387dba170390d.PwKeyController">
+   <children>
+      <Label layoutX="41.0" layoutY="24.0" prefHeight="44.0" prefWidth="169.0" text="Insert passphrase that will be used to decrypt your Secret key" textAlignment="CENTER" wrapText="true" />
+      <Button layoutX="109.0" layoutY="152.0" mnemonicParsing="false" onAction="#pwDeleteKey" text="OK" />
+      <Label fx:id="pwErr" layoutX="51.0" layoutY="135.0" textFill="#ff1111" />
+      <PasswordField fx:id="pw1" layoutX="51.0" layoutY="77.0" promptText="passphrase" />
+      <PasswordField fx:id="pw2" layoutX="51.0" layoutY="110.0" promptText="repeat passphrase" />
+   </children>
+</AnchorPane>

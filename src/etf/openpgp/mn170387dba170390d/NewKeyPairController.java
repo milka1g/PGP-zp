@@ -34,8 +34,11 @@ import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketGenerator;
 import org.bouncycastle.openpgp.bc.BcPGPPublicKeyRingCollection;
+import org.bouncycastle.openpgp.operator.PBESecretKeyDecryptor;
 import org.bouncycastle.openpgp.operator.PBESecretKeyEncryptor;
 import org.bouncycastle.openpgp.operator.PGPDigestCalculator;
+import org.bouncycastle.openpgp.operator.PGPDigestCalculatorProvider;
+import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
@@ -135,6 +138,7 @@ public class NewKeyPairController implements Initializable {
     static String name_ = "";
     static String email_ = "";
     private static String passPhrase = "";
+    public static final int s2kcount = 0x10;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -168,7 +172,7 @@ public class NewKeyPairController implements Initializable {
 	            root = FXMLLoader.load(getClass().getResource("Password.fxml"));
 	            Stage stage = new Stage();
 	            PasswordController.setStage(stage);
-	            stage.setTitle("Insert passphrase");
+	            stage.setTitle("Passphrase");
 	            Scene scene = new Scene(root, 300, 200);
 	            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 	            stage.setScene(scene);
@@ -187,8 +191,8 @@ public class NewKeyPairController implements Initializable {
     
     public static void setPwAndGen(String pw) throws PGPException, IOException {
     	passPhrase = pw;
-    	stage.close();
     	generate(name_+"<"+email_+">",passPhrase, rsaKeyLength);
+    	stage.close();
     	//stage.close(); //zatvori stage od unosa email,name,keysize
     	
     }
@@ -206,7 +210,7 @@ public class NewKeyPairController implements Initializable {
     	
 		char[] pass = password.toCharArray();
 		
-		PGPKeyRingGenerator pgpKeyRingGenerator = generateKeyRingGenerator(id, pass, 0x10, keysize);
+		PGPKeyRingGenerator pgpKeyRingGenerator = generateKeyRingGenerator(id, pass, s2kcount, keysize);
 		
 		PGPPublicKeyRing pgpPublicKeyRing = pgpKeyRingGenerator.generatePublicKeyRing();
 		
@@ -216,26 +220,11 @@ public class NewKeyPairController implements Initializable {
 		 * i private i public key imaju isti ID 
 		 *  "all fingerprints are calculated from the public key material only."
 		 * */
-//		Iterator<PGPPublicKey> ii = pgpPublicKeyRing.getPublicKeys();
-//		while(ii.hasNext()) {
-//			PGPPublicKey i = ii.next();
-//			System.out.println("Ovo je id od public keya: " + i.getKeyID() + " i ovo je master key: " + i.isMasterKey());
-//		}
-		
-		//pgpPublicKeyRing.encode(publicKeyRingStream);
-		//publicKeyRingStream.close();
+
 		
 		PGPSecretKeyRing pgpSecretKeyRing = pgpKeyRingGenerator.generateSecretKeyRing();
 		Main.skrcoll = PGPSecretKeyRingCollection.addSecretKeyRing(Main.skrcoll, pgpSecretKeyRing);
 		
-//		Iterator<PGPSecretKey> si = pgpSecretKeyRing.getSecretKeys();
-//		while(si.hasNext()) {
-//			PGPSecretKey i = si.next();
-//			System.out.println("Ovo je id od secret keya: " + i.getKeyID() + " i ovo je master key: " + i.isMasterKey());
-//		}
-		
-		//pgpSecretKeyRing.encode(secretKeyRingStream);
-		//secretKeyRingStream.close(); 
 		StartupController c = (StartupController) Main.loader.getController();
 		c.refreshz();
 		

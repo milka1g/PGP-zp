@@ -99,6 +99,12 @@ public class Main extends Application {
 					PGPPublicKeyRing i = ii.next();
 					System.out.println("Ovo je id od public keya:" + i.getPublicKey().getKeyID());
 				}
+					
+				Iterator<PGPPublicKeyRing> mi = pkrcollmy.getKeyRings();
+					while(mi.hasNext()) {
+					PGPPublicKeyRing i = mi.next();
+					System.out.println("Ovo je id od public keya MOG:" + Long.toHexString(i.getPublicKey().getKeyID()));
+				}
 				
 					System.out.println("VELICINA pkrcoll " + pkrcoll.size());
 			        System.out.println("VELICINA skrcoll " + skrcoll.size());

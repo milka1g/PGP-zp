@@ -38,6 +38,7 @@
 	-fx-font-family: "Lucida Console";
 	-fx-font-size: 1.2em;
 	-fx-font-weight: bold;
+	-fx-background-color: #395f61;
 }
 
 #pwkey,#pwgen{
@@ -60,6 +61,11 @@
 .table-row-cell:selected .text {
        -fx-fill: #00FFFF ;
 
+}
+
+
+#signEncr{
+	-fx-font-family: "Lucida Console";
 }
 
 

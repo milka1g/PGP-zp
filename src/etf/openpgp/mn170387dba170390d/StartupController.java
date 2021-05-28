@@ -65,7 +65,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
+import javafx.stage.StageStyle;
 import etf.openpgp.mn170387dba170390d.NewKeyPairController;
 
 public class StartupController implements Initializable {
@@ -115,6 +115,7 @@ public class StartupController implements Initializable {
     String email = "";
     String passPhrase = "";
     public static String pw = "";
+    public static boolean exportSecret;
     
 
     //Image keyImg = new Image(getClass().getResourceAsStream("key.png"));
@@ -157,6 +158,7 @@ public class StartupController implements Initializable {
     	    if(item!=null) {
     	    	PGPKeyRing p = null;
     	    	String name = "";
+    	    	Stage stage= null;
     	    	if(item.isPublic()) {
     	    		try {
 						p = Main.pkrcoll.getPublicKeyRing(item.getKeyIdLong());
@@ -165,15 +167,52 @@ public class StartupController implements Initializable {
 					}
     	    		name = item.getName()+"PUBLIC.asc";
     	    	} else {
-    	    		try {
-						p = Main.skrcoll.getSecretKeyRing(item.getKeyIdLong());
-					} catch (PGPException e) {
-						e.printStackTrace();
-					}
-    	    		name = item.getName()+"SECRET.asc";
+    	    		
+    	    		Parent root;
+			        try { 
+			            root = FXMLLoader.load(getClass().getResource("SecOrPub.fxml"));
+			            stage = new Stage();
+			            SecOrPubController.setStage(stage);
+			            stage.setTitle("Secret or Public");
+			            Scene scene = new Scene(root);
+			            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			            stage.setScene(scene);
+			            stage.setResizable(false);
+			            stage.initStyle(StageStyle.UNDECORATED);
+			            stage.initModality(Modality.APPLICATION_MODAL);
+			            stage.showAndWait();
+			        }
+			        catch (IOException e) {
+			            e.printStackTrace();
+			        }
+    	    		
+			        if(exportSecret) {
+			        	try {
+							p = Main.skrcoll.getSecretKeyRing(item.getKeyIdLong());
+						} catch (PGPException e) {
+							e.printStackTrace();
+						}
+			        	name = item.getName()+"SECRET.asc";
+			        } else {
+			        	try {
+			        		p = Main.pkrcollmy.getPublicKeyRing(item.getKeyIdLong());
+						} catch (PGPException e) {
+							e.printStackTrace();
+						}
+			        	name = item.getName()+"PUBLIC.asc";
+			        }
+    	    		
     	    	}
     	    	try {
-    	    		OutputStream out = new FileOutputStream(name,false);
+    	    	FileChooser fc = new FileChooser();
+    	    	fc.setTitle("Choose location");
+    	    	fc.getExtensionFilters().add(new ExtensionFilter("ASC files","*.asc"));
+    	    	String desktopPath = System.getProperty("user.home") + "/Desktop";
+    	    	File init = new File(desktopPath);
+    	    	fc.setInitialDirectory(init);
+    	    	fc.setInitialFileName(name);
+    	    	File file = fc.showSaveDialog(stage);
+    	    		OutputStream out = new FileOutputStream(file);
     	    		out = new ArmoredOutputStream(out);
     	    		p.encode(out);
     	    		out.close();
@@ -181,6 +220,8 @@ public class StartupController implements Initializable {
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
+				} catch (Exception e) {
+					System.out.println("Nisi selektovo");
 				}
     	    }
     	    
@@ -340,7 +381,24 @@ public class StartupController implements Initializable {
 
     @FXML
     void signOrEncryptFile(ActionEvent event) {
+    	Parent root;
+        try {
+            root = FXMLLoader.load(getClass().getResource("SignEncrypt.fxml"));
+            Stage stage = new Stage();
+            SignEncryptController.setStage(stage);
+            stage.setTitle("Sign and/or encrypt");
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
 
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    	
     }
     
     public ObservableList<MyKey> getKeys(){

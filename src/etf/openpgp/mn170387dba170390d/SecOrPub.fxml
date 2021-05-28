@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="etf.openpgp.mn170387dba170390d.SecOrPubController">
+   <children>
+      <Label layoutX="46.0" layoutY="14.0" prefHeight="63.0" prefWidth="209.0" text="Decide if you want to backup your secret key or export public key" textAlignment="CENTER" wrapText="true" />
+      <RadioButton fx:id="secretkey" layoutX="90.0" layoutY="78.0" mnemonicParsing="false" onAction="#export" prefHeight="17.0" prefWidth="121.0" selected="true" text="Backup Secret Key">
+         <toggleGroup>
+            <ToggleGroup fx:id="export" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="publickey" layoutX="90.0" layoutY="105.0" mnemonicParsing="false" onAction="#export" prefHeight="17.0" prefWidth="121.0" text="Export Public Key" toggleGroup="$export" />
+      <Button fx:id="decisionBtn" layoutX="134.0" layoutY="146.0" mnemonicParsing="false" onAction="#getDecision" text="OK" />
+   </children>
+</AnchorPane>

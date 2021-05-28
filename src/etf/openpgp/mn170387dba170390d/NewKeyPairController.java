@@ -91,6 +91,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import etf.openpgp.mn170387dba170390d.StartupController;
 import etf.openpgp.mn170387dba170390d.Main;
@@ -176,9 +177,10 @@ public class NewKeyPairController implements Initializable {
 	            Scene scene = new Scene(root, 300, 200);
 	            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 	            stage.setScene(scene);
+	            //stage.initStyle(StageStyle.UNDECORATED);
 	            stage.setResizable(false);
 	            stage.initModality(Modality.APPLICATION_MODAL);
-	            stage.show();
+	            stage.showAndWait();
 	        }
 	        catch (IOException e) {
 	            e.printStackTrace();

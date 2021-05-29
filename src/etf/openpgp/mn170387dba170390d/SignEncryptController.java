@@ -66,7 +66,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -102,6 +104,15 @@ public class SignEncryptController implements Initializable {
     @FXML
     private ListView<String> encryptList;
     
+    @FXML
+    private RadioButton algo3des;
+
+    @FXML
+    private ToggleGroup algo;
+
+    @FXML
+    private RadioButton algoidea;
+    
     private static Stage stage;
     
    // OutputStream out = null;
@@ -112,6 +123,7 @@ public class SignEncryptController implements Initializable {
     private List<String> selPublicKeyHexIDs;
     public static String pw;
     private String msg;
+    public static int algorithm= PGPEncryptedData.TRIPLE_DES;
     
     public static final int BUFFER_SIZE=4096;
     
@@ -126,10 +138,14 @@ public class SignEncryptController implements Initializable {
     	if(encryptCheckbox.isSelected()) {
     		encrypt = true;
     		encryptList.setDisable(false);
+    		algo3des.setDisable(false);
+    		algoidea.setDisable(false);
     	}
     	else {
     		encrypt = false;
     		encryptList.setDisable(true);
+    		algo3des.setDisable(true);
+    		algoidea.setDisable(true);
     	}
     }
 
@@ -389,7 +405,7 @@ public class SignEncryptController implements Initializable {
 				}
     		}
     		
-    		encryptedDataGenerator = new PGPEncryptedDataGenerator(new BcPGPDataEncryptorBuilder(PGPEncryptedData.TRIPLE_DES)
+    		encryptedDataGenerator = new PGPEncryptedDataGenerator(new BcPGPDataEncryptorBuilder(algorithm)
     				.setWithIntegrityPacket(true).setSecureRandom(new SecureRandom()));
             for(PGPPublicKey p : pubKeys) {
             	encryptedDataGenerator.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(p));
@@ -480,6 +496,8 @@ public class SignEncryptController implements Initializable {
 		
 		encryptList.setDisable(true);
 		signChoicebox.setDisable(true);
+		algo3des.setDisable(true);
+		algoidea.setDisable(true);
 	}
 	
 	private List<String> getSecretKeys(){
@@ -539,5 +557,14 @@ public class SignEncryptController implements Initializable {
 		}
 		System.out.println("");
 	}
+	
+
+    @FXML
+    void getAlgo(ActionEvent event) {
+    	if(algo3des.isSelected())
+    		algorithm = PGPEncryptedData.TRIPLE_DES;
+    	if(algoidea.isSelected())
+    		algorithm = PGPEncryptedData.IDEA;
+    }
 
 }

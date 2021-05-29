@@ -128,10 +128,7 @@ public class NewKeyPairController implements Initializable {
     
     @FXML
     private Label pwError;
-    
-//    private static PGPPublicKeyRing pgpPublicKeyRing;
-//	 
-//    private static PGPSecretKeyRing pgpSecretKeyRing;
+   
     
     private Integer[] keySize = {1024,2048,4096};
     private static Stage stage;
@@ -195,20 +192,11 @@ public class NewKeyPairController implements Initializable {
     	passPhrase = pw;
     	generate(name_+"<"+email_+">",passPhrase, rsaKeyLength);
     	stage.close();
-    	//stage.close(); //zatvori stage od unosa email,name,keysize
-    	
     }
     
     public static void generate(String id, String password, int keysize
     			) throws PGPException, IOException {
-    	
-    	//ispis, nece ti trebati posle ovo je test. treba export posle odvojeno
-//		OutputStream    publicKeyRingStream = new FileOutputStream("user.pkr",true);
-//        OutputStream    secretKeyRingStream = new FileOutputStream("user.skr",true);
-        
-        //-a to convert binary to ASCII (radix/base 64)
-//        publicKeyRingStream = new ArmoredOutputStream(publicKeyRingStream);
-//        secretKeyRingStream = new ArmoredOutputStream(secretKeyRingStream);
+    
     	
 		char[] pass = password.toCharArray();
 		
@@ -252,7 +240,7 @@ public class NewKeyPairController implements Initializable {
 * 0xff, or about 2 million iterations.  I'll use 0xc0 as a
 * default -- about 130,000 iterations.
 * @return PGP key ring generator
- * @throws FileNotFoundException 
+ * @throws FileNotFoundException ,16
 */
 	private static PGPKeyRingGenerator generateKeyRingGenerator(String id, char[] pass, int s2kcount, int keysize) 
 			throws PGPException, FileNotFoundException {

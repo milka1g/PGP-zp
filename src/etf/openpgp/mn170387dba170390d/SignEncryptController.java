@@ -212,6 +212,7 @@ public class SignEncryptController implements Initializable {
 		} catch (IOException e2) {}
     	
     	byte inputarr[] = input.toByteArray(); //sad imamo citav ulaz procitan u bajtovima
+    	arr = inputarr.clone();
     	System.out.println( " AAAA" + new String(inputarr, StandardCharsets.UTF_8));
     	try {
 			input.close();
@@ -384,15 +385,6 @@ public class SignEncryptController implements Initializable {
 			
 		}
     	
-    	if(!sign && !zip) {
-            ByteArrayOutputStream hout = new ByteArrayOutputStream();
-            try {
-                PGPUtil.writeFileToLiteralData(hout, PGPLiteralData.BINARY, file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            arr =  hout.toByteArray();
-    	}
     	
     	if(encrypt){
     		//dovati kljuceve selektovane
@@ -422,7 +414,7 @@ public class SignEncryptController implements Initializable {
             	eOut.close();
     			
             	arr = pom.toByteArray();//upises u glavni arr ovo sto si eknriptovao
-            	//System.out.println("PROVERA ENCRY: "+new String(arr, StandardCharsets.UTF_8));
+            	System.out.println("PROVERA ENCRY: "+new String(arr, StandardCharsets.UTF_8));
 				
 			} catch (IOException e) {
 				e.printStackTrace();

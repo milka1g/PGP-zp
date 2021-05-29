@@ -314,6 +314,23 @@ public class StartupController implements Initializable {
 
     @FXML
     void decryptOrVerifyFile(ActionEvent event) {
+    	Parent root;
+        try {
+            root = FXMLLoader.load(getClass().getResource("DecrVerif.fxml"));
+            Stage stage = new Stage();
+            SignEncryptController.setStage(stage);
+            stage.setTitle("Decrypt and/or Verify");
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
     

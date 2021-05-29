@@ -208,6 +208,7 @@ public class SignEncryptController implements Initializable {
 			while((i = in.read(buf,0,BUFFER_SIZE))>-1) { //citas u chunkovima od 4096 i upisujes u ovaj input, return je kolko B je procitao
 				input.write(buf,0,i); //upises sve iz buf u input
 			}
+			
 		} catch (IOException e2) {}
     	
     	byte inputarr[] = input.toByteArray(); //sad imamo citav ulaz procitan u bajtovima
@@ -215,6 +216,7 @@ public class SignEncryptController implements Initializable {
     	try {
 			input.close();
 		} catch (IOException e2) {}
+    	
     	//////////////////////////////////////////////////////////////////////
     	//System.out.println("PROVERA1: "+new String(inputarr, StandardCharsets.UTF_8)); ovo radi
     	
@@ -459,7 +461,7 @@ public class SignEncryptController implements Initializable {
     		filename.setText(file.getName());
 			try {
 				in = new FileInputStream(file);
-				in = new ArmoredInputStream(in);
+				//in = new ArmoredInputStream(in);
 				//byte[] text = in.readAllBytes();
 				//msg = new String(text, StandardCharsets.UTF_8);
 				//System.out.println("Ime fajla selektovanog: "+file.getAbsolutePath());

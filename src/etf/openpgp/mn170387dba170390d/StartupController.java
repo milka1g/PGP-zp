@@ -318,7 +318,7 @@ public class StartupController implements Initializable {
         try {
             root = FXMLLoader.load(getClass().getResource("DecrVerif.fxml"));
             Stage stage = new Stage();
-            SignEncryptController.setStage(stage);
+            DecrVerifController.stage = stage;
             stage.setTitle("Decrypt and/or Verify");
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

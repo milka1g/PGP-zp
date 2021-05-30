@@ -213,7 +213,7 @@ public class SignEncryptController implements Initializable {
     	
     	byte inputarr[] = input.toByteArray(); //sad imamo citav ulaz procitan u bajtovima
     	arr = inputarr.clone();
-    	System.out.println( " AAAA" + new String(inputarr, StandardCharsets.UTF_8));
+    	//System.out.println( " AAAA" + new String(inputarr, StandardCharsets.UTF_8));
     	try {
 			input.close();
 		} catch (IOException e2) {}
@@ -392,6 +392,7 @@ public class SignEncryptController implements Initializable {
     		for(String s : selPublicKeyHexIDs) {
     			try {
 					pubKeys.add(Main.pkrcoll.getPublicKey(Long.parseUnsignedLong(s,16)));
+					pubKeys.add(Main.pkrcollmy.getPublicKey(Long.parseUnsignedLong(s,16)));
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 				} catch (PGPException e) {
@@ -402,6 +403,7 @@ public class SignEncryptController implements Initializable {
     		encryptedDataGenerator = new PGPEncryptedDataGenerator(new BcPGPDataEncryptorBuilder(algorithm)
     				.setWithIntegrityPacket(true).setSecureRandom(new SecureRandom()));
             for(PGPPublicKey p : pubKeys) {
+            	if(p!=null)
             	encryptedDataGenerator.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(p));
             }
             
@@ -518,6 +520,18 @@ public class SignEncryptController implements Initializable {
 		Iterator<PGPPublicKeyRing> it = Main.pkrcoll.getKeyRings();
     	while(it.hasNext()) {
     		PGPPublicKeyRing skr = it.next();
+    		String at="",keyID="";
+    		Iterator<String> itattr = skr.getPublicKey().getUserIDs();
+    		while(itattr.hasNext()) {
+    			at = itattr.next();
+    		}
+    		keyID = Long.toHexString(skr.getPublicKey().getKeyID());
+    		list.add(at + "   " + keyID);
+    		
+    	}
+    	Iterator<PGPPublicKeyRing> itt = Main.pkrcollmy.getKeyRings();
+    	while(itt.hasNext()) {
+    		PGPPublicKeyRing skr = itt.next();
     		String at="",keyID="";
     		Iterator<String> itattr = skr.getPublicKey().getUserIDs();
     		while(itattr.hasNext()) {

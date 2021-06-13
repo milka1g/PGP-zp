@@ -56,6 +56,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -66,14 +67,25 @@ public class DecrVerifController {
 	
     @FXML
     private Button btn;
+    
+    @FXML
+    private TextField fileName;
+
+    @FXML
+    private TextField encWith;
+
+    @FXML
+    private TextField signBy;
+    
+    @FXML
+    private TextField integrity;
+
 
     public static String pw;
     
     public static Stage stage;
     
     
-
-	
 
 	public PGPSecretKey findSecretKey(long publicKeyId) {
 		try {
@@ -144,13 +156,14 @@ public class DecrVerifController {
 		fc.setInitialDirectory(init);
 		File file = fc.showOpenDialog(stage);
 		if (file != null) {
-			System.out.println("Fajl koji se dekriptuje: " + file.getName());
+			fileName.setText(file.getName());
 			try {
 				InputStream in = new FileInputStream(file);
 				//in = new ArmoredInputStream(in);
 				// ------------------
 				//InputStream inPGP;
 				InputStream inPGP = PGPUtil.getDecoderStream(in); //?ili samo ovo?
+				//procitace ako je radix64, ako nije nikom nista!
 				
 				//byte[] arr = inPGP.readAllBytes();
 
@@ -183,6 +196,7 @@ public class DecrVerifController {
 				} else {
 					notEncr = true;
 					System.out.println("not encypted");
+					encWith.setText("Not encrypted");
 				}
 
 				//
@@ -221,6 +235,14 @@ public class DecrVerifController {
 								new BcPGPDigestCalculatorProvider()).build(pw.toCharArray());
 						
 							privateKey = secretKey.extractPrivateKey(decryptor);
+							//postavis info o tome koji tvoj kljuc je koriscen za dekripciju
+							Iterator<String> itattr = secretKey.getPublicKey().getUserIDs();
+							String id="";
+				    		while(itattr.hasNext()) {
+				    			String attr = itattr.next();
+				    			id=id+attr+" ";
+				    		}
+							encWith.setText(id);
 						}
 					}
 					if (privateKey == null) {
@@ -238,7 +260,7 @@ public class DecrVerifController {
 				}
 
 				
-				//enkriptovo si do ovde, sad ide unzip ako ga ima pa verifikacija. radix je uradjen pri citanju gore
+				//dekriptovo si do ovde, sad ide unzip ako ga ima pa verifikacija. radix je uradjen pri citanju gore
 				
 				Object message;
 
@@ -292,6 +314,7 @@ public class DecrVerifController {
 				System.out.println("!!!! "+new String(output,StandardCharsets.UTF_8));
 				if (onePassSignatureList == null || signatureList == null) {
 					System.out.println("signatures not found.");
+					signBy.setText("Not signed");
 					throw new PGPException("signatures not found.");
 				} else {
 
@@ -310,11 +333,12 @@ public class DecrVerifController {
 								Iterator<String> userIds = publicKey.getUserIDs();
 								while (userIds.hasNext()) {
 									String userId = (String) userIds.next();
-									System.out.println(String.format("Signed by {%s}", userId));
+									signBy.setText(userId + " - Signature verified");
 								}
-								System.out.println("Signature verified");
+								//System.out.println("Signature verified");
 							} else {
-								System.out.println("Signature verification failed");
+								//System.out.println("Signature verification failed");
+								signBy.setText("Signature verification failed");
 							}
 						}
 					}
@@ -322,10 +346,13 @@ public class DecrVerifController {
 				}
 				if(pbe.isIntegrityProtected()) {
 					System.out.println("Cuvanje integriteta ukljuceno!");
+					integrity.setText("ON");
 				}
 				if (pbe.isIntegrityProtected() && !pbe.verify()) {
+					integrity.setText("ON, but integrity is LOST");
 					throw new PGPException("Data is integrity protected but integrity is lost.");
 				} else if (publicKey == null) {
+					signBy.setText("Not signed");
 					System.out.println("Signature not found");
 				} else {
 					try {

@@ -262,13 +262,17 @@ public class DecrVerifController {
 				
 				//dekriptovo si do ovde, sad ide unzip ako ga ima pa verifikacija. radix je uradjen pri citanju gore
 				
-				Object message;
+				Object message=null;
 
 				PGPOnePassSignatureList onePassSignatureList = null;
 				PGPSignatureList signatureList = null;
 				PGPCompressedData compressedData;
-
+				if(plainFact!=null)
 				message = plainFact.nextObject();
+				else {
+					message = o;
+				}
+				
 				ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 
 				while (message != null) {
@@ -301,9 +305,12 @@ public class DecrVerifController {
 						signatureList = (PGPSignatureList) message;
 						System.out.println("signature list");
 					} else {
-						throw new PGPException("message unknown message type.");
+						System.out.println("NEPOZNAT TIP PORUKE");
+						//throw new PGPException("message unknown message type.");
 					}
+					if(plainFact!=null)
 					message = plainFact.nextObject();
+					else message=null;
 				}
 				actualOutput.close();
 
@@ -315,7 +322,7 @@ public class DecrVerifController {
 				if (onePassSignatureList == null || signatureList == null) {
 					System.out.println("signatures not found.");
 					signBy.setText("Not signed");
-					throw new PGPException("signatures not found.");
+					//throw new PGPException("signatures not found.");
 				} else {
 
 					for (int i = 0; i < onePassSignatureList.size(); i++) {
@@ -344,17 +351,17 @@ public class DecrVerifController {
 					}
 
 				}
-				if(pbe.isIntegrityProtected()) {
+				if(pbe!=null && pbe.isIntegrityProtected()) {
 					System.out.println("Cuvanje integriteta ukljuceno!");
 					integrity.setText("ON");
 				}
-				if (pbe.isIntegrityProtected() && !pbe.verify()) {
+				if ( pbe!=null && pbe.isIntegrityProtected() && !pbe.verify()) {
 					integrity.setText("ON, but integrity is LOST");
 					throw new PGPException("Data is integrity protected but integrity is lost.");
 				} else if (publicKey == null) {
 					signBy.setText("Not signed");
 					System.out.println("Signature not found");
-				} else {
+				} //else {
 					try {
 				    	fc = new FileChooser();
 				    	fc.setTitle("Choose location");
@@ -372,7 +379,7 @@ public class DecrVerifController {
 						} catch (Exception e) {
 							System.out.println("Nisi selektovao");
 						}
-				}
+				//}
 				
 
 			} catch (FileNotFoundException e) {

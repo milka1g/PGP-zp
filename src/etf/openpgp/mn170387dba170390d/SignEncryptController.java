@@ -213,7 +213,7 @@ public class SignEncryptController implements Initializable {
     	
     	byte inputarr[] = input.toByteArray(); //sad imamo citav ulaz procitan u bajtovima
     	arr = inputarr.clone();
-    	//System.out.println( " AAAA" + new String(inputarr, StandardCharsets.UTF_8));
+    	//System.out.println( " AAAAAAAAAAA" + new String(arr, StandardCharsets.UTF_8));
     	try {
 			input.close();
 		} catch (IOException e2) {}
@@ -341,7 +341,7 @@ public class SignEncryptController implements Initializable {
 				
 				arr = barr.toByteArray(); //sad tu imamo prvo ovaj header pa celu poruku pa potpis na kraju
 				//na dalje vidis dal ces to da kompresujes pa enkriptujes
-				System.out.println("PROVERA sign: "+new String(arr, StandardCharsets.UTF_8));
+				//System.out.println("PROVERA sign: "+new String(arr, StandardCharsets.UTF_8));
 				
 				
 			} catch (PGPException e) {
@@ -350,21 +350,46 @@ public class SignEncryptController implements Initializable {
             catch (IOException e) {
 				e.printStackTrace();
 			}
+    	} else {
+    		//ako nije signovano onda samo da prepises
+    		OutputStream sOut;
+			try {
+				sOut = literalDataGenerator.open(bcarrout, PGPLiteralData.BINARY, 
+						name, inputarr.length, new Date());
+				for(int i=0; i!=inputarr.length; i++) {
+					sOut.write(inputarr[i]);
+				}
+				
+				sOut.close();
+				bcarrout.close();
+				
+				arr = barr.toByteArray();
+				System.out.println("NIJE SIGN AL MORA: "+new String(arr, StandardCharsets.UTF_8));
+			} catch (IOException e) {
+			} //vidi name da obrises 
+			
     	}
     	
     	if(zip) {
     		ByteArrayOutputStream pomOut = new ByteArrayOutputStream();
 			PGPCompressedDataGenerator compressedDataGenerator = new PGPCompressedDataGenerator(PGPCompressedDataGenerator.ZIP);
 			if(!sign) {
-				try {
-					PGPUtil.writeFileToLiteralData(compressedDataGenerator.open(pomOut), PGPLiteralData.BINARY, file);
+				//try {
+					//PGPUtil.writeFileToLiteralData(compressedDataGenerator.open(pomOut), PGPLiteralData.BINARY, file);
 					//System.out.println("PROVERA !sign u ZIP: "+new String(pomOut.toByteArray(), StandardCharsets.UTF_8));
-				} catch (IOException e) {
-					e.printStackTrace();
+				//} catch (IOException e) {
+					//e.printStackTrace();
+				//}
+				int i = 0;
+				while(i<arr.length) { //corrected
+					pomOut.write(arr[i]);
+					i++;
 				}
+				//System.out.println("PROVERAS: "+new String(pomOut.toByteArray(), StandardCharsets.UTF_8));
+				
 				//da ne moramo da se cimamo sa arr nego samo ova utility fja da prepise izabran fajl od gore u pomOut
 			} else {
-				//e jebiga sad moras da wrappujes u kompresor ovaj pomOut i da fake upisujes u neki OutputStream tj
+				//e  sad moras da wrappujes u kompresor ovaj pomOut i da fake upisujes u neki OutputStream tj
 				// da u pomOut ispadne da si upisao kompresovan sadrzaj pa  izvuces sa .toByteArray()
 				try {
 					OutputStream po = compressedDataGenerator.open(pomOut);
@@ -381,10 +406,11 @@ public class SignEncryptController implements Initializable {
 				
 			}
 			arr = pomOut.toByteArray(); //sta god da si uradio samo metnes opet u glavni arr
-			System.out.println("PROVERA sign u ZIPU: "+new String(arr, StandardCharsets.UTF_8));
+			//System.out.println("PROVERA sign u ZIPU: "+new String(arr, StandardCharsets.UTF_8));
 			
 		}
     	
+    	//System.out.println("PPPPPP: "+new String(arr, StandardCharsets.UTF_8));
     	
     	if(encrypt){
     		//dovati kljuceve selektovane

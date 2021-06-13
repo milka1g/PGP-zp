@@ -7,7 +7,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="273.0" prefWidth="460.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="etf.openpgp.mn170387dba170390d.DecrVerifController">
    <children>
-      <Button fx:id="btn" layoutX="180.0" layoutY="204.0" mnemonicParsing="false" onAction="#decryptOrVerifyFile" text="DecrVerif" />
+      <Button fx:id="btn" layoutX="180.0" layoutY="204.0" mnemonicParsing="false" onAction="#decryptOrVerifyFile" text="Decrypt/Verify" />
       <Label layoutX="47.0" layoutY="70.0" prefHeight="25.0" prefWidth="99.0" text="Encrypted with:" />
       <Label layoutX="47.0" layoutY="41.0" prefHeight="17.0" prefWidth="81.0" text="File name:" />
       <Label layoutX="47.0" layoutY="107.0" text="Signed by:" />

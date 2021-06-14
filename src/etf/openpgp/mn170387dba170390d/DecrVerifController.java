@@ -310,7 +310,8 @@ public class DecrVerifController {
 					}
 					if(plainFact!=null)
 					message = plainFact.nextObject();
-					else message=null;
+					else message=pgpF.nextObject();
+					System.out.println("PROSAO KROZ PAKETIC");
 				}
 				actualOutput.close();
 
@@ -320,7 +321,7 @@ public class DecrVerifController {
 				byte[] output = actualOutput.toByteArray();
 				System.out.println("!!!! "+new String(output,StandardCharsets.UTF_8));
 				if (onePassSignatureList == null || signatureList == null) {
-					System.out.println("signatures not found.");
+					System.out.println("signatures not found!!!!!!!");
 					signBy.setText("Not signed");
 					//throw new PGPException("signatures not found.");
 				} else {
@@ -354,14 +355,17 @@ public class DecrVerifController {
 				if(pbe!=null && pbe.isIntegrityProtected()) {
 					System.out.println("Cuvanje integriteta ukljuceno!");
 					integrity.setText("ON");
-				}
+				} else 
 				if ( pbe!=null && pbe.isIntegrityProtected() && !pbe.verify()) {
 					integrity.setText("ON, but integrity is LOST");
 					throw new PGPException("Data is integrity protected but integrity is lost.");
 				} else if (publicKey == null) {
 					signBy.setText("Not signed");
-					System.out.println("Signature not found");
+					System.out.println("Signature not found in the end.");
 				} //else {
+				else {
+					integrity.setText("OFF");
+				}
 					try {
 				    	fc = new FileChooser();
 				    	fc.setTitle("Choose location");

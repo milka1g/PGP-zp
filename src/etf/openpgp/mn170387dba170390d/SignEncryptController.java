@@ -326,7 +326,7 @@ public class SignEncryptController implements Initializable {
             try {
 				signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, privateKey);
 				
-				signatureGenerator.generateOnePassVersion(false).encode(bcarrout); //upise header od potpisa
+				signatureGenerator.generateOnePassVersion(true).encode(bcarrout); //upise header od potpisa
 				
 				OutputStream sOut = literalDataGenerator.open(bcarrout, PGPLiteralData.BINARY, 
 						name, inputarr.length, new Date()); //vidi name da obrises 
